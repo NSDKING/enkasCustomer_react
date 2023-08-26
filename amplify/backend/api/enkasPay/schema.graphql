@@ -1,0 +1,103 @@
+type Prospect @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  contrat: String
+  valeur: Float
+  statut: String
+  userID: ID! @index(name: "byUser")
+}
+
+type AffiliationContact @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  affiliationID: ID! @index(name: "byAffiliation")
+  userID: ID! @index(name: "byUser")
+}
+
+type Affiliation @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  ca: Float
+  code: String
+  utilisations: Float
+  AffiliationContacts: [AffiliationContact] @hasMany(indexName: "byAffiliation", fields: ["id"])
+  userID: ID! @index(name: "byUser")
+  statut: String
+}
+
+type Order @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  price: String
+  userID: ID! @index(name: "byUser")
+  productID: ID! @index(name: "byProduct")
+}
+
+type OneYear @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  price: Float
+}
+
+type ThreeMonth @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  price: Float
+}
+
+type OneMonth @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  price: Float
+}
+
+type Cart @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  number: Int
+  productID: ID! @index(name: "byProduct")
+  userID: ID @index(name: "byUser")
+  price: Float
+  nb_month: String
+}
+
+type Product @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  image: String
+  type: String
+  buycount: Int
+  cartCount: Int
+  Carts: [Cart] @hasMany(indexName: "byProduct", fields: ["id"])
+  OneMonth: OneMonth @hasOne
+  ThreeMonth: ThreeMonth @hasOne
+  OneYear: OneYear @hasOne
+  slug: String
+  Orders: [Order] @hasMany(indexName: "byProduct", fields: ["id"])
+}
+
+type Account @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  mail: AWSEmail
+  passe: String
+  profil: String
+  endDateAccount: AWSDate
+  endDateProfil: AWSDate
+  pin: String
+  free: Boolean
+  service: String
+  userID: ID @index(name: "byUser")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  FamilyName: String
+  LastName: String
+  city: String
+  mail: AWSEmail
+  birthdate: AWSDate
+  staff: Boolean
+  phoneNumber: String
+  Carts: [Cart] @hasMany(indexName: "byUser", fields: ["id"])
+  Account: [Account] @hasMany(indexName: "byUser", fields: ["id"])
+  Orders: [Order] @hasMany(indexName: "byUser", fields: ["id"])
+  Affiliations: [Affiliation] @hasMany(indexName: "byUser", fields: ["id"])
+  AffiliationContacts: [AffiliationContact] @hasMany(indexName: "byUser", fields: ["id"])
+  statut: String
+  Prospects: [Prospect] @hasMany(indexName: "byUser", fields: ["id"])
+} 
